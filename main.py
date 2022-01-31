@@ -1,7 +1,7 @@
 import sys
 
 import requests as req
-from PyQt5 import uic, QtCore, QtWidgets
+from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
@@ -26,18 +26,23 @@ class Main(QMainWindow):
         self.resize(*self.size)
         search_w = self.width() // 16 * 6
         search_h = self.height() / 9
-        self.search_le.setGeometry(*map(int, [search_w // 6, search_h // 3, search_w, search_h]))
-        self.search_le.setStyleSheet(f"QLineEdit {{ background-color: lightgray; border-radius: {search_h // 2}px;"
-                                     f"padding: 0 100px 0 20px; font-size: {int(search_h // 2)}px; }}")
+        self.search_le: QtWidgets.QLineEdit
+        self.search_le.setGeometry(
+            *map(int, [search_w // 6 * 9.5, search_h // 3, search_w, search_h]))
+        self.search_le.setStyleSheet(
+            f"QLineEdit {{ background-color: lightgray; border-radius: {search_h // 2}px;"
+            f"padding: 0 100px 0 20px; font-size: {int(search_h // 2)}px; }}")
         self.search_btn = SearchButton(self, self.search)
-        self.search_btn.setGeometry(*map(int, [self.search_le.x() + search_w - search_h // 1.5, self.search_le.y() + search_h // 2 - search_h // 4,
-                                    search_h // 2, search_h // 2]))
+        self.search_btn.setGeometry(*map(int, [self.search_le.x() + search_w - search_h // 1.5,
+                                               self.search_le.y() + search_h // 2 - search_h // 4,
+                                               search_h // 2, search_h // 2]))
         self.search_btn.setIconSize(self.search_btn.size())
         self.map.setGeometry(0, 0, *self.size)
         self.update_()
 
     def keyPressEvent(self, e):
-        self.search_le.clearFocus()
+        if self.search_le.hasFocus():
+            return
         if e.key() == Qt.Key_PageUp and self.spn[0] < 20:
             self.spn[0] *= self.spn_scale
             self.spn[1] *= self.spn_scale
@@ -71,6 +76,13 @@ class Main(QMainWindow):
     def search(self):
         print('ok')
 
+    def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
+        pos = a0.pos()
+        sle: QtWidgets.QLineEdit = self.search_le
+        if sle.hasFocus() and (not (sle.x() <= pos.x() <= sle.x() + sle.width())
+                               or not (sle.y() <= pos.y() <= sle.y() + sle.height())):
+            sle.clearFocus()
+
 
 class SearchButton(QtWidgets.QPushButton):
     def __init__(self, parent, func):
@@ -80,13 +92,9 @@ class SearchButton(QtWidgets.QPushButton):
         self.setIcon(QIcon('search_icon.png'))
         self.setCursor(Qt.PointingHandCursor)
 
-    def event(self, e: QtCore.QEvent) -> bool:
-        if e.type() == QtCore.QEvent.Paint:
-            return super().event(e)
-        elif e.type() == QtCore.QEvent.MouseButtonPress:
-            self.func()
-        return True
-
+    def mousePressEvent(self, e: QtGui.QMouseEvent) -> None:
+        self.func()
+        self.parent().setFocus()
 
 
 if __name__ == '__main__':
