@@ -15,18 +15,34 @@ class Main(QMainWindow):
         self.spn = [0.002, 0.002]
         self.coords = [37.530887, 55.703118]
         self.size = (1920, 1080)
+        self.step = self.spn[0] * 0.1
+        self.spn_scale = 5
         self.resize(*self.size)
         self.label.resize(*self.size)
         self.update_()
 
     def keyPressEvent(self, e):
         if e.key() == Qt.Key_PageUp and self.spn[0] < 20:
-            self.spn[0] *= 10
-            self.spn[1] *= 10
+            self.spn[0] *= self.spn_scale
+            self.spn[1] *= self.spn_scale
+            self.step = self.spn[0] * 0.1
         elif e.key() == Qt.Key_PageDown and self.spn[0] > 0.00002:
-            self.spn[0] /= 10
-            self.spn[1] /= 10
-        print(self.spn)
+            self.spn[0] /= self.spn_scale
+            self.spn[1] /= self.spn_scale
+            self.step = self.spn[0] * 0.1
+        elif e.key() == Qt.Key_Left:
+            self.coords[0] -= self.step
+            if self.coords[0] < -180:
+                self.coords[0] += 360
+        elif e.key() == Qt.Key_Right:
+            self.coords[0] += self.step
+            if self.coords[0] > 180:
+                self.coords[0] -= 360
+        elif e.key() == Qt.Key_Up:
+            self.coords[1] += self.step
+        elif e.key() == Qt.Key_Down:
+            self.coords[1] -= self.step
+        print(self.coords)
         self.update_()
 
     def update_(self):
