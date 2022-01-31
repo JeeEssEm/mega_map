@@ -11,11 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="map">
     <property name="geometry">
      <rect>
       <x>6</x>
@@ -28,64 +27,19 @@
      <string/>
     </property>
    </widget>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QSplitter" name="splitter_2">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <widget class="QWidget" name="">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QLineEdit" name="search_line"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="search">
-          <property name="text">
-           <string>Поиск</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QSplitter" name="splitter">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QWidget" name="verticalLayoutWidget">
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="QPushButton" name="sattelite">
-           <property name="text">
-            <string>Спутник</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="Hybrid">
-           <property name="text">
-            <string>Гибрид</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="schema">
-           <property name="text">
-            <string>Схема</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </widget>
-    </item>
-   </layout>
+   <widget class="QLineEdit" name="search_le">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>861</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(85, 255, 0);</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
