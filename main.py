@@ -20,8 +20,13 @@ class Main(QMainWindow):
         self.update_()
 
     def keyPressEvent(self, e):
-        if e.key() == Qt.Key_PageUp:
-            ...
+        if e.key() == Qt.Key_PageUp and self.spn[0] < 20:
+            self.spn[0] *= 10
+            self.spn[1] *= 10
+        elif e.key() == Qt.Key_PageDown and self.spn[0] > 0.00002:
+            self.spn[0] /= 10
+            self.spn[1] /= 10
+        print(self.spn)
         self.update_()
 
     def update_(self):
@@ -30,9 +35,6 @@ class Main(QMainWindow):
         pixmap.loadFromData(img, 'PNG')
         pixmap = pixmap.scaled(*self.size)
         self.label.setPixmap(pixmap)
-
-
-
 
 
 if __name__ == '__main__':
