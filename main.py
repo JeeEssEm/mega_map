@@ -13,7 +13,10 @@ class Main(QMainWindow):
         uic.loadUi('window.ui', self)
         self.url = "http://static-maps.yandex.ru/1.x/?ll={},{}&spn={},{}&l=map"
         self.spn = [0.002, 0.002]
-        self.coords = [7.530887, 55.703118]
+        self.coords = [37.530887, 55.703118]
+        self.size = (1920, 1080)
+        self.resize(*self.size)
+        self.label.resize(*self.size)
         self.update_()
 
     def keyPressEvent(self, e):
@@ -23,7 +26,10 @@ class Main(QMainWindow):
 
     def update_(self):
         img = req.get(self.url.format(*self.coords, *self.spn)).content
-        self.label: QLabel.setPixmap(QPixmap.fromBy)
+        pixmap = QPixmap()
+        pixmap.loadFromData(img, 'PNG')
+        pixmap = pixmap.scaled(*self.size)
+        self.label.setPixmap(pixmap)
 
 
 
