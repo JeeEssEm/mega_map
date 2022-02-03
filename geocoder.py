@@ -29,14 +29,18 @@ def get_map(pos: tuple[float, float] | list[float, float], size: float, map_type
     }
 
     if flag:
-        params["pt"] = "%f,%f,pm2bl" % (flag[0], flag[0])
+        params["pt"] = "%f,%f,comma" % (flag[0], flag[1])
 
     resp = requests.get("http://static-maps.yandex.ru/1.x/", params=params)
 
     if resp.status_code != 200:
         return
 
-    return resp.content, "PNG" if map_type != "sat" else "JPG"
+    image_type = "PNG"
+    if map_type != "map":
+        image_type = "JPG"
+
+    return resp.content, image_type
 
 
 def get_coordinates(address):
@@ -47,7 +51,7 @@ def get_coordinates(address):
     toponym_coodrinates = toponym["Point"]["pos"]
     # Широта, преобразованная в плавающее число:
     toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
-    return float(toponym_longitude), float(toponym_lattitude)
+    return [float(toponym_longitude), float(toponym_lattitude)]
 
 
 def get_ll_span(address):
