@@ -5,6 +5,7 @@ from PyQt5 import uic, QtCore, QtWidgets, QtGui
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel
 from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtCore import Qt
+import geocoder
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -19,9 +20,10 @@ class Main(QMainWindow):
         uic.loadUi('window.ui', self)
         self.url = "http://static-maps.yandex.ru/1.x/?ll={},{}&spn={},{}&l=map"
         self.spn = [0.002, 0.002]
-        self.coords = [37.530887, 55.703118]
+        self.coords = [37.595687, 55.787718]
         self.size = (1600, 900)
         self.step = self.spn[0] * 0.1
+        self.last_search_flag = None
         self.spn_scale = 5
         self.resize(*self.size)
         search_w = self.width() // 16 * 6
@@ -66,15 +68,24 @@ class Main(QMainWindow):
         print(self.coords)
         self.update_()
 
-    def update_(self):
-        img = req.get(self.url.format(*self.coords, *self.spn)).content
+    def update_(self, new_coords=None):
+        if new_coords:
+            self.coords = list(new_coords)
+
+        img, img_type = geocoder.get_map(self.coords, self.spn[0], "sat", self.last_search_flag)
         pixmap = QPixmap()
-        pixmap.loadFromData(img, 'PNG')
+        pixmap.loadFromData(img, img_type)
         pixmap = pixmap.scaled(*self.size, transformMode=Qt.SmoothTransformation)
         self.map.setPixmap(pixmap)
 
     def search(self):
-        print('ok')
+        new_coords = list(geocoder.get_coordinates(self.search_le.text()))
+        if not new_coords:
+            return self.update_()
+
+        self.last_search_flag = new_coords
+
+        self.update_(new_coords)
 
     def mousePressEvent(self, a0: QtGui.QMouseEvent) -> None:
         pos = a0.pos()

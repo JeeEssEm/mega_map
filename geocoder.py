@@ -1,20 +1,48 @@
 import requests
 import json
+from io import BytesIO
+from PIL import Image
 API_KEY = '40d1649f-0493-4b70-98ba-98533de7710b'
 # Получаем toponym объекта по адресу
 
 
 def geocode(address):
-    ...
-    # features = json_response["response"]["GeoObjectCollection"]["featureMember"]
-    # Возвращаем часть словаря, т.е. нужный нам toponym
-    # return features[0]["GeoObject"] if features else None
+    params = {
+        "apikey": API_KEY,
+        "geocode": address,
+        "format": "json"
+    }
+
+    try:
+        js = requests.get("http://geocode-maps.yandex.ru/1.x/", params=params).json()
+        features = js["response"]["GeoObjectCollection"]["featureMember"]
+        return features[0]["GeoObject"] if features else None
+    except:
+        return None
+
+
+def get_map(pos: tuple[float, float] | list[float, float], size: float, map_type: str, flag: list[float, float] | None=None):
+    params = {
+        "ll": "%f,%f" % (pos[0], pos[1]),
+        "spn": "%f,%f" % (size, size),
+        "l": map_type
+    }
+
+    if flag:
+        params["pt"] = "%f,%f,pm2bl" % (flag[0], flag[0])
+
+    resp = requests.get("http://static-maps.yandex.ru/1.x/", params=params)
+
+    if resp.status_code != 200:
+        return
+
+    return resp.content, "PNG" if map_type != "sat" else "JPG"
 
 
 def get_coordinates(address):
     toponym = geocode(address)
     if not toponym:
-        return None, None
+        return None
     # Координаты центра топонима:
     toponym_coodrinates = toponym["Point"]["pos"]
     # Широта, преобразованная в плавающее число:
@@ -68,3 +96,6 @@ def get_nearest_object(point, kind):
     return features[0]["GeoObject"]["name"] if features else None
 
 
+if __name__ == "__main__":
+    img = get_map((37.53, 55.7), 0.002, "sat")
+    Image.open(BytesIO(img)).show()
