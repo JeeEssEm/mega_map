@@ -21,7 +21,7 @@ def geocode(address):
         return None
 
 
-def get_map(pos: tuple[float, float] | list[float, float], size: float, map_type: str, flag: list[float, float] | None=None):
+def get_map(pos: tuple[float, float] or list[float, float], size: float, map_type: str, flag: list[float, float] or None=None):
     params = {
         "ll": "%f,%f" % (pos[0], pos[1]),
         "spn": "%f,%f" % (size, size),
